@@ -153,7 +153,9 @@ class Glyph():
 		
 	def GetHitGlyph(self, pos):	
 		return self;
-
+		
+	def GetHitChild(self, pos):	
+		return self;
 
 class CharGlyph(Glyph):
 	def __init__(self, window):
@@ -225,7 +227,7 @@ class RowGlyph(Glyph):
 		self.children = [];
 		
 	def Render(self):
-		
+		self.window.ClearRect(self.Bounds());
 		for child in self.children:
 			child.Render();
 		
@@ -289,7 +291,12 @@ class RowGlyph(Glyph):
 			if child.Intersects(pos):
 				return child.GetHitGlyph(pos);
 		return self;
-
+		
+	def GetHitChild(self, pos):	
+		for child in self.children:
+			if child.Intersects(pos):
+				return child;
+		return self;
 	def Text(self):
 		text = "";
 		for child in self.children:
@@ -346,6 +353,17 @@ class EditableRowGlyph(RowGlyph):
 		
 	def Render(self):
 		RowGlyph.Render(self);
+		
+	def RenderCursor(self):
+		if self.cursorIndex > 0:
+			cursorBounds = self.children[self.cursorIndex-1].Bounds();
+			self.cursor.SetPosition((cursorBounds[0] + cursorBounds[2] - 1, cursorBounds[1]));
+		else:
+			cursorBounds = self.Bounds();
+			self.cursor.SetPosition((0, cursorBounds[1]));
+			
+		self.cursor.Render();
+		
 	def ProcessInput(self,e):
 		#print " EditableRowGlyph : got event" , self
 		
@@ -376,22 +394,13 @@ class EditableRowGlyph(RowGlyph):
 			#print "after" , self.cursorIndex, len(self.children)
 
 		if e.type is event.MOUSE_PRESS:
-			rect = self.AcceptCursor(e.mousePosition)
-			self.cursor.SetPosition((rect[0], rect[1]));
-			##print e.mousePosition
-			##print rect
-			self.cursor.Render();
+			hitGlyph = self.GetHitGlyph(e.mousePosition);
+			if self is not hitGlyph:		
+				self.cursorIndex =  self.children.index(hitGlyph);
+		
 		return False;	
 		
-	def AcceptCursor(self, cursorPosition ):
-		##print "AcceptCursor"
-		##print cursorPosition ; 
-		glyph = self.GetHitGlyph(cursorPosition);
-		if self is not glyph:
-			##print "Found"
-			return glyph.Bounds();
-		#print "Not found"	
-		return self.pos[0] , self.pos[1],0,0
+	   
 
 
 
@@ -413,9 +422,20 @@ class EditableColGlyph(ColGlyph):
 		for row in self.children:
 			row.SetSize((self.size[0],30));
 		
+	def Render(self):
+		ColGlyph.Render(self);
+		self.children[self.rowWithCursor].RenderCursor();
+		
+			
 	def ProcessInput(self,e):
 		#print " EditableColGlyph : got event" , self
-		if e.type is event.KEY_PRESS:
+		if e.type is event.MOUSE_PRESS:
+			hitGlyph = self.GetHitChild(e.mousePosition);
+			if self is not hitGlyph:		
+				self.rowWithCursor =  self.children.index(hitGlyph);
+				self.children[self.rowWithCursor].ProcessInput(e);
+					
+		elif e.type is event.KEY_PRESS:
 			if e.keyCode == event.K_RETURN:
 				#print "Got event.K_RETURN"
 				row = EditableRowGlyph(self.window)
@@ -430,6 +450,10 @@ class EditableColGlyph(ColGlyph):
 			elif e.keyCode == event.K_RIGHT:
 				if  not self.children[self.rowWithCursor].ProcessInput(e):
 					self.rowWithCursor = min(self.rowWithCursor+1 , len(self.children) -1 );
+			elif e.keyCode == event.K_UP :
+				self.rowWithCursor = max(self.rowWithCursor-1 , 0);
+			elif e.keyCode == event.K_DOWN:
+				self.rowWithCursor = min(self.rowWithCursor+1 , len(self.children) -1 );
 			else:	
 				self.children[self.rowWithCursor].ProcessInput(e);
 				
