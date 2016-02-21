@@ -157,6 +157,76 @@ class Glyph():
 	def GetHitChild(self, pos):	
 		return self;
 
+
+class Composition(Glyph):
+	def __init__(self, window):
+		Glyph.__init__(self, window);
+		self.children = [];
+		
+	def Render(self):
+		self.window.ClearRect(self.Bounds());
+		for child in self.children:
+			child.Render();
+		
+		
+	def Insert( self, g , at ):
+		self.children.insert( at, g);		
+		g.SetParent(self);
+		self.AdjustChildPositions();
+		return True;
+		
+	def Remove( self, at ):
+		if len(self.children) is 0:
+			return False;
+		if at < 0 or at > len(self.children):
+			return False;
+		self.window.ClearRect(self.Bounds());
+		self.children[at].SetParent(None);
+		del self.children[at];
+		self.AdjustChildPositions();
+		return True
+		
+	def Bounds(self):
+		x,y,w,h = self.pos[0],self.pos[1],0,0;
+		return x,y, max(self.size[0] , w) ,max(self.size[1] , h);
+		
+	def SetPosition(self, pos):
+		Glyph.SetPosition(self, pos);	
+		self.AdjustChildPositions();
+		
+	def AdjustChildPositions(self):
+		pass;
+			
+	def ProcessInput(self,e):
+		for child in self.children:
+			if child.ProcessInput(e):
+				return True;
+		return False;
+
+	def  GetChildren(self):
+		return self.children;
+		
+	def GetHitGlyph(self, pos):	
+		for child in self.children:
+			if child.Intersects(pos):
+				return child.GetHitGlyph(pos);
+		return self;
+		
+	def GetHitChild(self, pos):	
+		for child in self.children:
+			if child.Intersects(pos):
+				return child;
+		return self;
+	def Text(self):
+		text = "";
+		for child in self.children:
+			if hasattr(child,'GetChar'):
+				text = text + child.GetChar();
+				
+		return text;
+		
+		
+			
 class CharGlyph(Glyph):
 	def __init__(self, window):
 		Glyph.__init__(self, window);
@@ -216,10 +286,6 @@ class ImageGlyph(Glyph):
 
 
 
-class GroupedGlyph(Glyph):
-	pass;
-
-	
 		
 class RowGlyph(Glyph):
 	def __init__(self, window):
@@ -230,7 +296,6 @@ class RowGlyph(Glyph):
 		self.window.ClearRect(self.Bounds());
 		for child in self.children:
 			child.Render();
-		
 		
 	def Insert( self, g , at ):
 		#print at
@@ -283,7 +348,7 @@ class RowGlyph(Glyph):
 				return True;
 		return False;
 
-	def  GetChildren(self):
+	def GetChildren(self):
 		return self.children;
 		
 	def GetHitGlyph(self, pos):	
