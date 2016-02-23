@@ -10,37 +10,30 @@ class Compositor():
 		
 		
 class OneColumnCompositor(Compositor):
-	def __init__(self, pageWidth, pageHeight ):
-		self.pageWidth = pageWidth;
-		self.pageHeight = pageHeight;
-		self.pages = [];
+	def __init__(self, pageSize ):
+		self.pageWidth = pageSize[0]-10*2;
+		self.pageHeight = pageSize[1];
 		
 		
+	def Compose(self, composition, origins):
 		
-	def Compose(self, composition):
-		class Page():
-			def __init__(self,w,h):
-				self.w = w;
-				self.h = h;
-				self.columns = [];
+		rowX = origins[0];
+		rowY = origins[1];
+		
+		rowW = self.pageWidth;
+		rowHeight = 20;
+		
+		for child in composition.children:
+			gX,gY,gW,gH = child.Bounds();
+			
+			if rowX + gW > rowW :
+				rowX = 0;
+				gX = 0;
+				rowY = rowY + rowHeight;
+			else:
+				gX = rowX;
+				rowX = rowX + gW;
 				
+			child.SetPosition( (gX , rowY ));
 		
-		
-		self.pages = [];
-		page = Page( self.pageWidth, self.pageHeight);
-		
-	
-		itr = composition.CreateIterator();		
-		while !itr.IsDone():
-			glyph = itr.CurrentItem();
-
-			gX,gY,gW,gH = glyph.Bounds();
-			if page.currentRow.placeX + 	
-				
-			if pag
-
-
-
-			itr.Next();
-
-
+		return composition;

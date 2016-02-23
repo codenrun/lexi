@@ -1,27 +1,22 @@
 
-import gfx;
-
+import gfxFactory;
 import event;
+from window import *
 
-gc = gfx.MakeGFX('pygame');
+
+eventing = gfxFactory.MakeEventing('pygame' );
+gc = gfxFactory.MakeGFX('pygame');
 gc.Init();
 
-eventing = gfx.MakeEventing('pygame' );
-window = gfx.Window(gc , (700,500) );		
+window = Window(gc , (700,500), (100,100) );		
 window.SetPosition((100,100));
-
 window.Render();
-
 
 bRunning = True;
 while(bRunning):	
 	gc.Blit();
-
 	for e in eventing.GetEvents():
-		
-		window.HandleInput(e);
-		
-			
+		window.HandleInput(e);			
 		if e.type == event.QUIT:
 			gc.Quit();
 			bRunning = False;
