@@ -63,6 +63,7 @@ class PyGameGFX(gfx.GFX):
 		pygame.init();
 		self.screen = pygame.display.set_mode((1000, 500));
 		pygame.mouse.set_visible(1)
+		pygame.key.set_repeat (500, 30)
 
 
 	def Blit(self):
