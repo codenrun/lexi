@@ -10,28 +10,37 @@ class Compositor():
 		
 		
 class OneColumnCompositor(Compositor):
-	def __init__(self, pageSize ):
+	def __init__(self, pageSize , origins ):
 		self.pageWidth = pageSize[0];
 		self.pageHeight = pageSize[1];
+		self.origins = origins
 		
+	def Compose(self, composition ):
 		
-	def Compose(self, composition, origins):
-		
-		rowX = origins[0];
-		rowY = origins[1];
+		rowX = self.origins[0];
+		rowY = self.origins[1];
 		
 		rowW = self.pageWidth;
 		rowHeight = 30;
 		
 		for child in composition.children:
-			gX,gY,gW,gH = child.Bounds();
-			
-			if rowX + gW > rowW :
-				rowX = 0;	
-				rowY = rowY + rowHeight;
-			
-			gX = rowX;
-			rowX = rowX + gW;	
-			child.SetPosition( (gX , rowY ));
-		
+			if child.IsRenderable():
+
+				gX,gY,gW,gH = child.Bounds();
+				
+				if rowX + gW > rowW :
+					rowX = self.origins[0];	
+					rowY = rowY + rowHeight;
+				
+				gX = rowX;
+				rowX = rowX + gW;	
+				child.SetPosition( (gX , rowY ));
+			else:				
+				formatCommand = child.GetFormatCommand();
+				print formatCommand
+				if formatCommand == "next-line":
+					rowX = self.origins[0];	
+					rowY = rowY + rowHeight;
+				child.SetPosition( (rowX , rowY ));
+									
 		return composition;

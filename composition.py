@@ -20,13 +20,12 @@ class Composition(Glyph):
 		
 		
 	def RenderCursor(self):
-		print "RenderCursor ",self.cursorIndex
 		if self.cursorIndex > 0:
 			cursorBounds = self.children[self.cursorIndex-1].Bounds();
 			self.cursor.SetPosition((cursorBounds[0] + cursorBounds[2] - 2, cursorBounds[1]));
 		else:
 			cursorBounds = self.Bounds();
-			self.cursor.SetPosition((0, cursorBounds[1]));
+			self.cursor.SetPosition((cursorBounds[0], cursorBounds[1]));
 			
 		self.cursor.Render();	
 		
@@ -68,19 +67,22 @@ class Composition(Glyph):
 			if e.keyCode == event.K_BACKSPACE:
 				if self.Remove(self.cursorIndex-1):
 					self.cursorIndex = self.cursorIndex -1;
-			elif e.keyCode == event.K_LEFT :
+			elif e.keyCode == event.K_LEFT  or e.keyCode == event.K_UP:
 				#print "left"
 				if self.cursorIndex > 0 :
 					self.cursorIndex = self.cursorIndex -1;
 					return True;
 				
-			elif e.keyCode == event.K_RIGHT:
+			elif e.keyCode == event.K_RIGHT or e.keyCode == event.K_DOWN :
 				#print "right"
 
 				if self.cursorIndex < len(self.children):		
 					self.cursorIndex = self.cursorIndex +1;		
 					return True;
-				
+			elif e.keyCode == event.K_RETURN:
+				ch = FormatMarker(self.window, "next-line");
+				if self.Insert(ch, self.cursorIndex):
+					self.cursorIndex = self.cursorIndex +1;	
 			else:	
 				ch = CharGlyph(self.window);
 				ch.SetChar(e.keyCode);

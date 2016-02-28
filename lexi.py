@@ -8,7 +8,8 @@ eventing = gfxFactory.MakeEventing('pygame' );
 gc = gfxFactory.MakeGFX('pygame');
 gc.Init();
 
-window = Window(gc , (800,500), (100,0) );		
+window = Window(gc , (800,500), (100,0) );	
+window.SetTitle("LEXi");	
 window.SetPosition((100,0));
 window.Render();
 

@@ -50,7 +50,8 @@ class Glyph():
 	def GetHitChild(self, pos):	
 		return self;
 
-		
+	def IsRenderable(self):
+		return True;	
 		
 			
 
@@ -91,6 +92,21 @@ class CharGlyph(Glyph):
 	def GetChar(self):
 		return self.ch;
 	
+class FormatMarker(CharGlyph):
+	def __init__(self, window, formatCommand):
+		CharGlyph.__init__(self, window);
+		self.formatCommand = formatCommand;
+		
+	def IsRenderable(self):
+		return False;	
+	
+	def GetFormatCommand(self):
+		return self.formatCommand;			
+	def Render(self):
+		pass;
+	def Bounds(self):
+		return (self.pos[0], self.pos[1],0,0);
+	
 class ImageGlyph(Glyph):
 	def __init__(self, window):
 		Glyph.__init__(self, window);
@@ -112,7 +128,7 @@ class ImageGlyph(Glyph):
 		##print " ImageGlyph : got event",self
 		return False;
 
-
+	
 
 		
 class RowGlyph(Glyph):

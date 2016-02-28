@@ -10,12 +10,17 @@ class Window():
 	def __init__(self, gc, size, pos):
 		self.impl = gc.GetImplemenation('Window' , size ) ;	
 		self.composition = Composition(self);
-		self.compositor = compositors.OneColumnCompositor(size);
-		self.composition.SetSize(size); 
+		self.compositor = compositors.OneColumnCompositor( ( size[0]-10 , size[1]),(10,10) );
+		self.composition.SetSize(size);
+		self.composition.SetPosition((10,10));
+		 
 	def SetPosition(self,pos):
 		self.impl.SetPosition(pos);
-			
 	
+	
+	def SetTitle(self, title):
+		self.impl.SetTitle(title);		
+	 
 	def Intersects(self, pos ):
 		pos_x , pos_y = pos;
 		x,y,w,h = self.Bounds();
@@ -47,7 +52,7 @@ class Window():
 		if e.device == event.KEYBOARD:
 			self.composition.HandleInput(e);
 			##print " Window : Got event ";
-			self.compositor.Compose(self.composition, (0,0));
+			self.compositor.Compose(self.composition);
 			self.Render();
 			return True;	
 		return False;

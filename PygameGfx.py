@@ -20,6 +20,9 @@ class PyGameWindowImpl:
 		self.pos = (0,0);
 		self.size = size;
 		
+	def SetTitle(self, title):
+		pygame.display.set_caption(title);	
+		
 	def Render(self)	:
 		pygame.draw.rect(self.background, (0,255,10),self.background.get_rect(), 2);
 		self.screen.blit(self.background, self.pos);
