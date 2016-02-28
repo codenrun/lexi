@@ -11,7 +11,7 @@ class Window():
 		self.impl = gc.GetImplemenation('Window' , size ) ;	
 		self.composition = Composition(self);
 		self.compositor = compositors.OneColumnCompositor(size);
-		 
+		self.composition.SetSize(size); 
 	def SetPosition(self,pos):
 		self.impl.SetPosition(pos);
 			
@@ -47,7 +47,7 @@ class Window():
 		if e.device == event.KEYBOARD:
 			self.composition.HandleInput(e);
 			##print " Window : Got event ";
-			self.compositor.Compose(self.composition, self.impl.pos);
+			self.compositor.Compose(self.composition, (0,0));
 			self.Render();
 			return True;	
 		return False;

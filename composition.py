@@ -6,11 +6,29 @@ class Composition(Glyph):
 		Glyph.__init__(self, window);
 		self.children = [];
 		self.cursorIndex = 0;
+		self.cursor =  CharGlyph(window);
+		self.cursor.SetChar('|');
+		self.cursor.SetColor((255,0,0));
+		
 		
 	def Render(self):
 		self.window.ClearRect(self.Bounds());
 		for child in self.children:
 			child.Render();
+		self.RenderCursor();
+
+		
+		
+	def RenderCursor(self):
+		print "RenderCursor ",self.cursorIndex
+		if self.cursorIndex > 0:
+			cursorBounds = self.children[self.cursorIndex-1].Bounds();
+			self.cursor.SetPosition((cursorBounds[0] + cursorBounds[2] - 2, cursorBounds[1]));
+		else:
+			cursorBounds = self.Bounds();
+			self.cursor.SetPosition((0, cursorBounds[1]));
+			
+		self.cursor.Render();	
 		
 		
 	def Insert( self, g , at ):

@@ -11,7 +11,7 @@ class Compositor():
 		
 class OneColumnCompositor(Compositor):
 	def __init__(self, pageSize ):
-		self.pageWidth = pageSize[0]-10*2;
+		self.pageWidth = pageSize[0];
 		self.pageHeight = pageSize[1];
 		
 		
@@ -21,19 +21,17 @@ class OneColumnCompositor(Compositor):
 		rowY = origins[1];
 		
 		rowW = self.pageWidth;
-		rowHeight = 20;
+		rowHeight = 30;
 		
 		for child in composition.children:
 			gX,gY,gW,gH = child.Bounds();
 			
 			if rowX + gW > rowW :
-				rowX = 0;
-				gX = 0;
+				rowX = 0;	
 				rowY = rowY + rowHeight;
-			else:
-				gX = rowX;
-				rowX = rowX + gW;
-				
+			
+			gX = rowX;
+			rowX = rowX + gW;	
 			child.SetPosition( (gX , rowY ));
 		
 		return composition;
