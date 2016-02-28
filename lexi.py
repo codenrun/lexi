@@ -8,8 +8,8 @@ eventing = gfxFactory.MakeEventing('pygame' );
 gc = gfxFactory.MakeGFX('pygame');
 gc.Init();
 
-window = Window(gc , (700,500), (100,100) );		
-window.SetPosition((100,100));
+window = Window(gc , (800,500), (100,0) );		
+window.SetPosition((100,0));
 window.Render();
 
 bRunning = True;
