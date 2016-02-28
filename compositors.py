@@ -10,37 +10,37 @@ class Compositor():
 		
 		
 class OneColumnCompositor(Compositor):
-	def __init__(self, pageWidth, pageHeight ):
-		self.pageWidth = pageWidth;
-		self.pageHeight = pageHeight;
-		self.pages = [];
+	def __init__(self, pageSize , origins ):
+		self.pageWidth = pageSize[0];
+		self.pageHeight = pageSize[1];
+		self.origins = origins
 		
+	def Compose(self, composition ):
 		
+		rowX = self.origins[0];
+		rowY = self.origins[1];
 		
-	def Compose(self, composition):
-		class Page():
-			def __init__(self,w,h):
-				self.w = w;
-				self.h = h;
-				self.columns = [];
+		rowW = self.pageWidth;
+		rowHeight = 30;
+		
+		for child in composition.children:
+			if child.IsRenderable():
+
+				gX,gY,gW,gH = child.Bounds();
 				
-		
-		
-		self.pages = [];
-		page = Page( self.pageWidth, self.pageHeight);
-		
-	
-		itr = composition.CreateIterator();		
-		while !itr.IsDone():
-			glyph = itr.CurrentItem();
-
-			gX,gY,gW,gH = glyph.Bounds();
-			if page.currentRow.placeX + 	
+				if rowX + gW > rowW :
+					rowX = self.origins[0];	
+					rowY = rowY + rowHeight;
 				
-			if pag
-
-
-
-			itr.Next();
-
-
+				gX = rowX;
+				rowX = rowX + gW;	
+				child.SetPosition( (gX , rowY ));
+			else:				
+				formatCommand = child.GetFormatCommand();
+				print formatCommand
+				if formatCommand == "next-line":
+					rowX = self.origins[0];	
+					rowY = rowY + rowHeight;
+				child.SetPosition( (rowX , rowY ));
+									
+		return composition;
