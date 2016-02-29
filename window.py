@@ -56,8 +56,8 @@ class Window():
 			self.Render();
 			return True;	
 		return False;
-	def RenderChar( self, ch, pos, fgColor, bgColor):
-		self.impl.RenderChar(ch, pos,fgColor , bgColor);	
+	def RenderChar( self, ch, pos, fgColor, bgColor, bBold):
+		self.impl.RenderChar(ch, pos,fgColor , bgColor, bBold);	
 	
 	def GetCharExtents( self, ch):
 		return self.impl.GetCharExtents(ch);

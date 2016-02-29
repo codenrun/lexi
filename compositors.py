@@ -36,9 +36,8 @@ class OneColumnCompositor(Compositor):
 				rowX = rowX + gW;	
 				child.SetPosition( (gX , rowY ));
 			else:				
-				formatCommand = child.GetFormatCommand();
-				print formatCommand
-				if formatCommand == "next-line":
+				marker = child.Marker();
+				if marker == "next-line":
 					rowX = self.origins[0];	
 					rowY = rowY + rowHeight;
 				child.SetPosition( (rowX , rowY ));

@@ -31,7 +31,8 @@ class PyGameWindowImpl:
 		self.pos = pos;
 			
 	
-	def RenderChar( self, ch, pos, col ,bg):
+	def RenderChar( self, ch, pos, col ,bg, bBold):
+		self.Font.set_bold(bBold);
 		ch_surface = self.Font.render( ch , 1, col ,bg )
 		self.background.blit( ch_surface , pos);       
 
@@ -72,22 +73,16 @@ class PyGameGFX(gfx.GFX):
 	def Blit(self):
 		pygame.display.flip()
 
-
-
 	def Context(self):
 		return self.screen;
 	
 	def GetImplemenation(self,type,size):
 		if type is  'Window':
 			return PyGameWindowImpl(self.screen,size);
-
 		return None;
 
 	def Quit(self):
 		pygame.quit();
-
-
-
 
 
 class PyGameEvent(event.Event):
@@ -95,15 +90,15 @@ class PyGameEvent(event.Event):
 		event.Event.__init__(self,e);
 		
 		if e.type == KEYDOWN:
-			print "KEYDOWN"
-
 			self.device = event.KEYBOARD;
 			self.type = event.KEY_PRESS;
-			self.keyCode = self.get_key_code(e.key);
+			self.keyCode = self.get_key_code(e);
+
 		if e.type == KEYUP:			
 			self.device = event.KEYBOARD;
 			self.type = event.KEY_RELEASE;
-			self.keyCode = self.get_key_code(e.key);
+			self.keyCode = event.K_UNKN;
+		
 		if e.type == MOUSEMOTION:
 			(leftDown,middleDown,rightDown) = e.buttons;
 			self.bLeftButtonDown = leftDown;
@@ -142,87 +137,22 @@ class PyGameEvent(event.Event):
 			
 		elif  e.type == pygame.QUIT:
 			self.type = event.QUIT
-	def get_key_code(self, pyKeyCode):
-		print "get_key_code", pyKeyCode , pygame.K_LEFT, pyKeyCode == pygame.K_LEFT
-
-		if pyKeyCode is pygame.K_a:
-			return event.K_a 
-		if pyKeyCode is pygame.K_b:
-			return event.K_b 
-		if pyKeyCode is pygame.K_c:
-			return event.K_c 
-		if pyKeyCode is pygame.K_d:
-			return event.K_d 
-		if pyKeyCode is pygame.K_e:
-			return event.K_e 
-		if pyKeyCode is pygame.K_f :
-			return event.K_f  
-		if pyKeyCode is pygame.K_g :
-			return event.K_g 
-		if pyKeyCode is pygame.K_h :
-			return event.K_h 
-		if pyKeyCode is pygame.K_i  :
-			return event.K_i  
-		if pyKeyCode is pygame.K_j :
-			return event.K_j 
-		if pyKeyCode is pygame.K_k :
-			return event.K_k  
-		if pyKeyCode is pygame.K_l  :
-			return event.K_l  
-		if pyKeyCode is pygame.K_m:
-			return event.K_m
-		if pyKeyCode is pygame.K_n :
-			return event.K_n 
-		if pyKeyCode is pygame.K_o :
-			return event.K_o 
-		if pyKeyCode is pygame.K_p :
-			return event.K_p 
-		if pyKeyCode is pygame.K_q :
-			return event.K_q 
-		if pyKeyCode is pygame.K_r  :
-			return event.K_r  
-		if pyKeyCode is pygame.K_s :
-			return event.K_s 
-		if pyKeyCode is pygame.K_t :
-			return event.K_t 
-		if pyKeyCode is pygame.K_u :
-			return event.K_u 
-		if pyKeyCode is pygame.K_v :
-			return event.K_v 
-		if pyKeyCode is pygame.K_w:
-			return event.K_w
-		if pyKeyCode is pygame.K_x :
-			return event. K_x  
-		if pyKeyCode is pygame.K_y :
-			return event.K_y 
-		if pyKeyCode is pygame.K_z :
-			return event. K_z  
-		if pyKeyCode is pygame.K_0  :
-			return event.K_0 
-		if pyKeyCode is pygame.K_1 :
-			return event.K_1 
-		if pyKeyCode is pygame.K_2 :
-			return event.K_2 
-		if pyKeyCode is pygame.K_3 :
-			return event.K_3  
-		if pyKeyCode is pygame.K_4 :
-			return event. K_4  
-		if pyKeyCode is pygame.K_5 :
-			return event.K_5  
-		if pyKeyCode is pygame.K_6 :
-			return event.K_6  
-		if pyKeyCode is pygame.K_7:
-			return event.K_7  
+	def get_key_code(self, e):
 		
-		if pyKeyCode is pygame.K_8 :
-			return event.K_8  
+		pyKeyCode = e.key;
+		asciiCode =  e.unicode;
+		asciiCodeVal =  ord(asciiCode) if len(asciiCode) else 0;
 		
-		if pyKeyCode is pygame.K_9    :
-			return event.K_9  
-		
-		if pyKeyCode is pygame.K_SPACE:
-			return event.K_SPACE  
-		
+		if asciiCodeVal >=32 and asciiCodeVal <= 126:
+			return asciiCode;
+               	
+		if  pyKeyCode == pygame.K_LCTRL:
+			print "l-ctrl"
+			
+		if  e.type == KEYDOWN and asciiCodeVal == 2:
+			print "bold"
+			return event.K_BOLD              	
+				               	
 		if pyKeyCode is pygame.K_BACKSPACE:
 			return event.K_BACKSPACE  
 		
@@ -241,17 +171,16 @@ class PyGameEvent(event.Event):
 		if pyKeyCode == pygame.K_RETURN:
 			return event.K_RETURN  	
 
-		return event.K_UNKN;
 		
-		
+		return event.K_UNKN
 		
 		
 		
 class PyGameEventing(event.Eventing):
 	def GetEvents(self):
 		events = [];
-		for event in pygame.event.get():
-			events.append(PyGameEvent(event));
+		for e in pygame.event.get():
+			events.append(PyGameEvent(e));
 		return events;
 
 

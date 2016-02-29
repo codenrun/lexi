@@ -63,11 +63,14 @@ class CharGlyph(Glyph):
 		self.color=(10,10,10);
 		self.bg = (255,255,255);
 		self.bSelect = False;
+		self.bBold = False;
 		
 	def SetChar(self, ch):
 		self.ch = ch;
+		
 	def Render(self):
-		self.window.RenderChar( self.ch, self.pos, self.color, self.bg);
+		self.window.RenderChar( self.ch, self.pos, self.color, self.bg, self.bBold);
+		
 	def Bounds(self):
 		#print "CharGlyph::Bounds"
 
@@ -77,6 +80,8 @@ class CharGlyph(Glyph):
 	def SetColor(self, col):
 		self.color = col;
 	
+	def SetBold(self, bBold):
+		self.bBold = bBold;
 	
 	def ProcessInput(self,e):
 		if e.type is event.MOUSE_PRESS:
@@ -92,16 +97,22 @@ class CharGlyph(Glyph):
 	def GetChar(self):
 		return self.ch;
 	
+	def IsMarker(self):
+		return False;
+				
 class FormatMarker(CharGlyph):
-	def __init__(self, window, formatCommand):
+	def __init__(self, window, marker):
 		CharGlyph.__init__(self, window);
-		self.formatCommand = formatCommand;
+		self.marker = marker;
+	
+	def IsMarker(self):
+		return True;
 		
 	def IsRenderable(self):
 		return False;	
 	
-	def GetFormatCommand(self):
-		return self.formatCommand;			
+	def Marker(self):
+		return self.marker;			
 	def Render(self):
 		pass;
 	def Bounds(self):

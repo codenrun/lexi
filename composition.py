@@ -13,8 +13,16 @@ class Composition(Glyph):
 		
 	def Render(self):
 		self.window.ClearRect(self.Bounds());
+		
+		boldOn = False;
 		for child in self.children:
+			if child.IsMarker() and child.Marker() == "bold":
+				boldOn = True if boldOn is False else False;
+
+			child.SetBold(boldOn);			
 			child.Render();
+			
+			
 		self.RenderCursor();
 
 		
@@ -60,22 +68,20 @@ class Composition(Glyph):
 			
 	
 	def ProcessInput(self,e):
-		
 		if e.type is event.KEY_PRESS:
-			#print "e.keyCode : ", e.keyCode 
-			#print "before ",  self.cursorIndex, len(self.children)
+			print "before ",  self.cursorIndex, len(self.children)
+			
+			if e.keyCode == event.K_UNKN:
+				return False;
+			
 			if e.keyCode == event.K_BACKSPACE:
 				if self.Remove(self.cursorIndex-1):
 					self.cursorIndex = self.cursorIndex -1;
 			elif e.keyCode == event.K_LEFT  or e.keyCode == event.K_UP:
-				#print "left"
 				if self.cursorIndex > 0 :
 					self.cursorIndex = self.cursorIndex -1;
 					return True;
-				
 			elif e.keyCode == event.K_RIGHT or e.keyCode == event.K_DOWN :
-				#print "right"
-
 				if self.cursorIndex < len(self.children):		
 					self.cursorIndex = self.cursorIndex +1;		
 					return True;
@@ -83,13 +89,20 @@ class Composition(Glyph):
 				ch = FormatMarker(self.window, "next-line");
 				if self.Insert(ch, self.cursorIndex):
 					self.cursorIndex = self.cursorIndex +1;	
+			elif e.keyCode == event.K_BOLD:
+				print "Inserting bold-on marker"
+				ch = FormatMarker(self.window, "bold");
+				if self.Insert(ch, self.cursorIndex):
+					self.cursorIndex = self.cursorIndex +1;
 			else:	
 				ch = CharGlyph(self.window);
 				ch.SetChar(e.keyCode);
 				if self.Insert(ch, self.cursorIndex):
 					self.cursorIndex = self.cursorIndex +1;
-			#print "after" , self.cursorIndex, len(self.children)
-
+			
+			
+			print "after" , self.cursorIndex, len(self.children)
+			
 		if e.type is event.MOUSE_PRESS:
 			hitGlyph = self.GetHitGlyph(e.mousePosition);
 			if self is not hitGlyph:		
