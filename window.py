@@ -10,7 +10,7 @@ class Window():
 	def __init__(self, gc, size, pos):
 		self.impl = gc.GetImplemenation('Window' , size ) ;	
 		self.composition = Composition(self);
-		self.compositor = compositors.OneColumnCompositor( ( size[0]-10 , size[1]),(10,10) );
+		self.compositor = compositors.TwoColumnCompositor( ( size[0]-10 , size[1]),(10,10) );
 		self.composition.SetSize(size);
 		self.composition.SetPosition((10,10));
 		 
