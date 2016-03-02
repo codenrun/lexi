@@ -23,6 +23,8 @@ K_LEFT  = 404
 K_RETURN = '\r'
 K_BOLD = 520
 
+K_F1 = 801
+K_F2 = 802
 
 class Eventing():
 	def GetEvents(self):

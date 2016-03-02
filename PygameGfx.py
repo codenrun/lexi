@@ -142,7 +142,7 @@ class PyGameEvent(event.Event):
 		pyKeyCode = e.key;
 		asciiCode =  e.unicode;
 		asciiCodeVal =  ord(asciiCode) if len(asciiCode) else 0;
-		
+
 		if asciiCodeVal >=32 and asciiCodeVal <= 126:
 			return asciiCode;
                	
@@ -152,8 +152,13 @@ class PyGameEvent(event.Event):
 		if  e.type == KEYDOWN and asciiCodeVal == 2:
 			print "bold"
 			return event.K_BOLD              	
-				               	
-		if pyKeyCode is pygame.K_BACKSPACE:
+									
+		if pyKeyCode == pygame.K_F1:
+			return event.K_F1
+		if pyKeyCode == pygame.K_F2:
+			return event.K_F2
+				               			               	
+		if pyKeyCode == pygame.K_BACKSPACE:
 			return event.K_BACKSPACE  
 		
 		if pyKeyCode == pygame.K_UP:
