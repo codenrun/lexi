@@ -66,24 +66,12 @@ class TwoColumnCompositor(Compositor):
 		rowW = self.pageWidth/2 - 25;
 		rowHeight = 30;
 		
-		def GotoNextLine():
-			rowX = rowXInit;	
-			rowY = rowY + rowHeight;
-		
-			if rowY - rowYInit + rowHeight >= self.pageHeight :
-				rowXInit = self.pageWidth/2 ;
-				
-				rowY = rowYInit;	
-				rowX = rowXInit;
-		
-		
 		for child in composition.children:
 			if child.IsRenderable():
 
 				gX,gY,gW,gH = child.Bounds();
 				
 				if rowX + gW - rowXInit > rowW :
-					GotoNextLine();zxcm
 					rowX = rowXInit;	
 					rowY = rowY + rowHeight;
 				
